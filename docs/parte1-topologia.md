@@ -82,7 +82,7 @@ Modelos recomendados (si no aparecen exactamente así, usar el equivalente más 
 | Servidor | Server-PT | IP fija (la pone Sebastián) |
 | PC / laptop | PC-PT / Laptop-PT | DHCP |
 | AP | Access-Point-PT | Uplink por cable; clientes por Wi-Fi |
-| IoT | **SBC-PT** | Tiene Ethernet. Si no está, usar PC-PT con el mismo nombre |
+| IoT | **SBC-PT** + módulo `PT-IOT-NM-1CFE` | Puerto `FastEthernet0` |
 
 ### Edificio A — Piso 1 · DataCenter · `Rack-DC-A`
 
@@ -102,8 +102,8 @@ Modelos recomendados (si no aparecen exactamente así, usar el equivalente más 
 | `PC-P2-A-1` | PC-PT | 6 |
 | `PC-P2-A-2` | PC-PT | 6 |
 | `AP-P2-A` | Access-Point-PT | 10 |
-| `LT-P2-A` | Laptop-PT (Wi-Fi a `AP-P2-A`) | 10 |
-| `IOT-P2-A` | SBC-PT | 10 |
+| `LT-P2-A` | Laptop-PT (Wi-Fi, SSID `WIFI-P2-A`) | 10 |
+| `IOT-P2-A` | SBC-PT + `PT-IOT-NM-1CFE` | 10 |
 
 ### Edificio A — Piso 3 · `Rack-P3-A`
 
@@ -113,8 +113,8 @@ Modelos recomendados (si no aparecen exactamente así, usar el equivalente más 
 | `PC-P3-A-1` | PC-PT | 6 |
 | `PC-P3-A-2` | PC-PT | 6 |
 | `AP-P3-A` | Access-Point-PT | 10 |
-| `LT-P3-A` | Laptop-PT (Wi-Fi a `AP-P3-A`) | 10 |
-| `IOT-P3-A` | SBC-PT | 10 |
+| `LT-P3-A` | Laptop-PT (Wi-Fi, SSID `WIFI-P3-A`) | 10 |
+| `IOT-P3-A` | SBC-PT + `PT-IOT-NM-1CFE` | 10 |
 
 ### Edificio B · `Rack-DC-B`
 
@@ -128,8 +128,8 @@ Se añade `SRV-B` respecto a la propuesta base: sin él el Edificio B no tendrí
 | `PC-B-1` | PC-PT | 6 |
 | `PC-B-2` | PC-PT | 6 |
 | `AP-B` | Access-Point-PT | 10 |
-| `LT-B` | Laptop-PT (Wi-Fi a `AP-B`) | 10 |
-| `IOT-B` | SBC-PT | 10 |
+| `LT-B` | Laptop-PT (Wi-Fi, SSID `WIFI-B`) | 10 |
+| `IOT-B` | SBC-PT + `PT-IOT-NM-1CFE` | 10 |
 | `PP-FIBRA-B` | Patch Panel (opcional, modo físico) | — |
 
 ## 4. Enlaces entre sedes (fibra + redundancia)
@@ -140,24 +140,14 @@ Dos enlaces **independientes** `R-A` ↔ `R-B`. Si uno cae, el otro mantiene la 
 
 Documentado en la ayuda de PT para el **2911** y confirmado en foros de Cisco: hay que instalar **los dos** módulos, si no el cable de fibra no engancha.
 
-| Orden | Módulo | Dónde |
+| Enlace | Módulos | Interfaz (ya verificada en el `.pkt`) |
 |---|---|---|
-| 1 | `HWIC-1GE-SFP` | Slot HWIC **0** (enlace principal) |
-| 2 | `GLC-LH-SMD` | Dentro de esa tarjeta SFP |
-| 3 | `HWIC-1GE-SFP` | Slot HWIC **1** (enlace de respaldo) |
-| 4 | `GLC-LH-SMD` | Dentro de esa segunda tarjeta |
+| Principal | `HWIC-1GE-SFP` + `GLC-LH-SMD` | `GigabitEthernet0/2/0` |
+| Respaldo | `HWIC-1GE-SFP` + `GLC-LH-SMD` | `GigabitEthernet0/3/0` |
 
-Pasos en PT: apagar el router → arrastrar `HWIC-1GE-SFP` al slot → arrastrar `GLC-LH-SMD` al hueco SFP de la tarjeta → encender → cable **Fiber** (naranja) entre los dos SFP.
+En el `.pkt` quedó así: `R-A Gi0/2/0` ↔ `R-B Gi0/2/0` (principal) y `R-A Gi0/3/0` ↔ `R-B Gi0/3/0` (respaldo). Cable **Fiber** (naranja) entre los dos SFP.
 
-**Nombre de la interfaz: POR VERIFICAR en Packet Tracer.** Después de encender, en el CLI:
-
-```text
-show ip interface brief
-```
-
-Anota el nombre real (suele ser algo como `GigabitEthernet0/0/0` y `GigabitEthernet0/1/0`, o `GigabitEthernet1/0` y `GigabitEthernet2/0`). Escribe ese nombre en el `.pkt` (etiqueta) y, si cambia, avísale a Sebastián. En las tablas de abajo se usa el placeholder `Gi-SFP-0` / `Gi-SFP-1`.
-
-En modo lógico se puede cablear router a router. En modo físico se puede pasar por `PP-FIBRA-A` y `PP-FIBRA-B`; el mapa lógico de abajo asume enlace directo.
+En modo lógico se cableó router a router. En modo físico se puede pasar por `PP-FIBRA-A` y `PP-FIBRA-B`.
 
 ## 5. Mapa de puertos
 
@@ -168,7 +158,7 @@ Convenciones del profesor:
 - Router → switch: **troncal** (router-on-a-stick). Usuarios: **acceso**.
 - Cobre: cable **Straight-Through** (directo). Entre sedes: **Fiber**.
 
-Puertos de PC/servidor en PT: `FastEthernet0`. AP: `Port 0`. IoT SBC-PT: **POR VERIFICAR** (suele ser `FastEthernet0`).
+Puertos de PC/servidor en PT: `FastEthernet0`. AP: `Port 0`. IoT SBC-PT con `PT-IOT-NM-1CFE`: `FastEthernet0`.
 
 ### 5.1 SW-CORE-A (Rack-DC-A)
 
@@ -185,8 +175,8 @@ Puertos de PC/servidor en PT: `FastEthernet0`. AP: `Port 0`. IoT SBC-PT: **POR V
 | Origen | Puerto | Destino | Puerto | Cable | Rol |
 |---|---|---|---|---|---|
 | R-A | GigabitEthernet0/0 | SW-CORE-A | Gig0/2 | cobre directo | troncal LAN |
-| R-A | Gi-SFP-0 | R-B | Gi-SFP-0 | fibra | WAN principal |
-| R-A | Gi-SFP-1 | R-B | Gi-SFP-1 | fibra | WAN respaldo |
+| R-A | Gi0/2/0 | R-B | Gi0/2/0 | fibra | WAN principal |
+| R-A | Gi0/3/0 | R-B | Gi0/3/0 | fibra | WAN respaldo |
 
 `GigabitEthernet0/1` y `GigabitEthernet0/2` de fábrica se dejan libres.
 
@@ -221,18 +211,18 @@ Puertos de PC/servidor en PT: `FastEthernet0`. AP: `Port 0`. IoT SBC-PT: **POR V
 | SW-B | Fa0/5 | IOT-B | FastEthernet0 | cobre directo | acceso VLAN 10 |
 | SW-B | Gig0/2 | R-B | GigabitEthernet0/0 | cobre directo | troncal (hacia router) |
 | R-B | GigabitEthernet0/0 | SW-B | Gig0/2 | cobre directo | troncal LAN |
-| R-B | Gi-SFP-0 | R-A | Gi-SFP-0 | fibra | WAN principal |
-| R-B | Gi-SFP-1 | R-A | Gi-SFP-1 | fibra | WAN respaldo |
+| R-B | Gi0/2/0 | R-A | Gi0/2/0 | fibra | WAN principal |
+| R-B | Gi0/3/0 | R-A | Gi0/3/0 | fibra | WAN respaldo |
 
 ### 5.6 Enlaces inalámbricos (sin cable)
 
-| Cliente | Se asocia a | VLAN |
-|---|---|---|
-| LT-P2-A | AP-P2-A | 10 |
-| LT-P3-A | AP-P3-A | 10 |
-| LT-B | AP-B | 10 |
+| Cliente | Se asocia a | SSID (temporal) | VLAN |
+|---|---|---|---|
+| LT-P2-A | AP-P2-A | `WIFI-P2-A` | 10 |
+| LT-P3-A | AP-P3-A | `WIFI-P3-A` | 10 |
+| LT-B | AP-B | `WIFI-B` | 10 |
 
-SSID lo define Sebastián. Coloca cada laptop cerca de su AP para que tome señal.
+Las laptops tienen módulo Wi-Fi. Los SSID son temporales; Sebastián puede cambiarlos.
 
 ## 6. Propuesta preliminar de VLANs y direccionamiento
 
@@ -286,9 +276,9 @@ Se puede trabajar en modo lógico o físico (el profesor acepta ambos). El físi
    - A piso 3: `Rack-P3-A`
    - B: `Rack-DC-B`
 7. Colocar los dispositivos del inventario en su rack (sección 3). Renombrarlos **antes** de cablear.
-8. En `R-A` y `R-B`: instalar `HWIC-1GE-SFP` + `GLC-LH-SMD` × 2 (sección 4). Verificar el nombre de interfaz.
+8. En `R-A` y `R-B`: instalar `HWIC-1GE-SFP` + `GLC-LH-SMD` × 2 (sección 4). Interfaces: `Gi0/2/0` (principal) y `Gi0/3/0` (respaldo).
 9. Cablear según la sección 5. Cobre intra-edificio; fibra solo `R-A` ↔ `R-B` (dos veces).
-10. Asociar cada laptop a su AP (cerca, para que haya cobertura).
+10. En cada SBC-PT instalar `PT-IOT-NM-1CFE` (puerto `FastEthernet0`). Asociar laptops a su AP con SSID `WIFI-P2-A`, `WIFI-P3-A` y `WIFI-B`.
 11. Volver al modo **Logical** y comprobar que todos los enlaces estén en verde.
 12. Guardar como `packet-tracer/redes-lan-proyecto.pkt`.
 
