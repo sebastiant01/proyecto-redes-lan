@@ -1,0 +1,25 @@
+dispositivo_origen,puerto_origen,dispositivo_destino,puerto_destino,tipo_cable,rol,vlan_o_uso,notas
+SW-CORE-A,FastEthernet0/1,SRV-DHCP-A,FastEthernet0,cobre directo,acceso,VLAN 5,DataCenter A
+SW-CORE-A,FastEthernet0/2,SRV-WEB-A,FastEthernet0,cobre directo,acceso,VLAN 5,DataCenter A
+SW-CORE-A,FastEthernet0/24,SW-P3-A,GigabitEthernet0/2,cobre directo,troncal,todas,Interpiso A: core a piso 3
+SW-CORE-A,GigabitEthernet0/1,SW-P2-A,GigabitEthernet0/2,cobre directo,troncal,todas,Interpiso A: core a piso 2
+SW-CORE-A,GigabitEthernet0/2,R-A,GigabitEthernet0/0,cobre directo,troncal,todas,Router-on-a-stick A
+R-A,Gi-SFP-0,R-B,Gi-SFP-0,fibra,fibra,WAN principal,POR VERIFICAR nombre real con show ip interface brief
+R-A,Gi-SFP-1,R-B,Gi-SFP-1,fibra,fibra,WAN respaldo,POR VERIFICAR nombre real con show ip interface brief
+SW-P2-A,FastEthernet0/1,PC-P2-A-1,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-P2-A
+SW-P2-A,FastEthernet0/2,PC-P2-A-2,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-P2-A
+SW-P2-A,FastEthernet0/3,AP-P2-A,Port 0,cobre directo,acceso,VLAN 10,Uplink del AP
+SW-P2-A,FastEthernet0/4,IOT-P2-A,FastEthernet0,cobre directo,acceso,VLAN 10,Puerto IoT POR VERIFICAR si el modelo no es SBC-PT
+SW-P3-A,FastEthernet0/1,PC-P3-A-1,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-P3-A
+SW-P3-A,FastEthernet0/2,PC-P3-A-2,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-P3-A
+SW-P3-A,FastEthernet0/3,AP-P3-A,Port 0,cobre directo,acceso,VLAN 10,Uplink del AP
+SW-P3-A,FastEthernet0/4,IOT-P3-A,FastEthernet0,cobre directo,acceso,VLAN 10,Puerto IoT POR VERIFICAR si el modelo no es SBC-PT
+SW-B,FastEthernet0/1,PC-B-1,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-DC-B
+SW-B,FastEthernet0/2,PC-B-2,FastEthernet0,cobre directo,acceso,VLAN 6,Rack-DC-B
+SW-B,FastEthernet0/3,SRV-B,FastEthernet0,cobre directo,acceso,VLAN 5,DMZ en sede B para ping
+SW-B,FastEthernet0/4,AP-B,Port 0,cobre directo,acceso,VLAN 10,Uplink del AP
+SW-B,FastEthernet0/5,IOT-B,FastEthernet0,cobre directo,acceso,VLAN 10,Puerto IoT POR VERIFICAR si el modelo no es SBC-PT
+SW-B,GigabitEthernet0/2,R-B,GigabitEthernet0/0,cobre directo,troncal,todas,Router-on-a-stick B
+LT-P2-A,Wireless0,AP-P2-A,inalambrico,inalambrico,acceso,VLAN 10,Sin cable; asociar laptop al AP
+LT-P3-A,Wireless0,AP-P3-A,inalambrico,inalambrico,acceso,VLAN 10,Sin cable; asociar laptop al AP
+LT-B,Wireless0,AP-B,inalambrico,inalambrico,acceso,VLAN 10,Sin cable; asociar laptop al AP
